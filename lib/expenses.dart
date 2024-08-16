@@ -1,3 +1,4 @@
+import 'package:expense_app/chart/chart.dart';
 import 'package:expense_app/expensesList.dart';
 import 'package:expense_app/model/expense.dart';
 import 'package:expense_app/newExpense.dart';
@@ -37,6 +38,7 @@ class ExpensesState extends State<Expenses> {
 
   void _showAddExpenseModal() {
     showModalBottomSheet(
+      useSafeArea: true,
       context: context,
       builder: (cxt) => NewExpense(onAddExpense: addExpense),
       isScrollControlled: true,
@@ -72,6 +74,8 @@ class ExpensesState extends State<Expenses> {
 
   @override
   Widget build(context) {
+    final width = MediaQuery.of(context).size.width;
+
     Widget content =
         const Center(child: Text("Expenses Not Found. Try to add some new!"));
     if (_registeredExpenses.isNotEmpty) {
@@ -94,14 +98,29 @@ class ExpensesState extends State<Expenses> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          const Text("The Chart"),
-          Expanded(
-            child: content,
-          ),
-        ],
-      ),
+      body: width < 600
+          ? Column(
+              children: [
+                // const Text("The Chart"),
+                Chart(expenses: _registeredExpenses),
+                Expanded(
+                  child: content,
+                ),
+              ],
+            )
+          : Row(
+              children: [
+                // const Text("The Chart"),
+                Expanded(
+                  child: Chart(
+                    expenses: _registeredExpenses,
+                  ),
+                ),
+                Expanded(
+                  child: content,
+                ),
+              ],
+            ),
     );
   }
 }
